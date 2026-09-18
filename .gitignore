@@ -8,3 +8,4 @@ __pycache__/
 config.json
 *.json
 /football_cli.egg-info
+/build
