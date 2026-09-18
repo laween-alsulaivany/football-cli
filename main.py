@@ -6,7 +6,19 @@ from config import get_league, get_team, load_config, save_config
 from ui import build_live_matches_table, build_fixtures_table, build_standings_table
 
 
-@click.group()
+class AliasedGroup(click.Group):
+    aliases = {
+        "standing": "standings",
+        "myteam": "team",
+        "favorite": "set-team",
+    }
+
+    def get_command(self, ctx, cmd_name):
+        cmd_name = self.aliases.get(cmd_name, cmd_name)
+        return super().get_command(ctx, cmd_name)
+
+
+@click.group(cls=AliasedGroup)
 def cli():
     """football scores and fixtures in your terminal."""
 
@@ -164,11 +176,6 @@ def set_team(team_name):
 
     Console().print(f"Favorite team set to [bold]{team['shortName']}[/bold].")
 
-
-# Aliases for commands
-cli.add_command(standings, "standing")
-cli.add_command(team, "myteam")
-cli.add_command(set_team, "favorite")
 
 if __name__ == "__main__":
     cli()
