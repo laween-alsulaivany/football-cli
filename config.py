@@ -1,3 +1,6 @@
+from zoneinfo import ZoneInfo
+from datetime import datetime
+
 import json
 import re
 from pathlib import Path
@@ -359,9 +362,28 @@ def get_team(team_name):
     # Return the team only if exactly one unambiguous match was found
     if len(matched_teams) == 1:
         return matched_teams[0]
+    else:
+        # If multiple matches were found or no matches were found
+        return None
 
-    # If multiple matches were found or no matches were found
-    raise RuntimeError("Could not find a team.")
+# converts api time to the configured timezone
+
+
+def format_datetime(utc_value):
+    config = load_config()
+    timezone = ZoneInfo(config["timezone"])
+    value = utc_value.replace("Z", "+00:00")
+
+    # convert UTC to local time
+    local = datetime.fromisoformat(value).astimezone(timezone)
+
+    # format date
+    date = local.strftime("%m/%d/%Y")
+
+    # format time
+    time = local.strftime("%I:%M%p").lstrip("0").lower()
+
+    return date, time
 
 
 def load_config():
