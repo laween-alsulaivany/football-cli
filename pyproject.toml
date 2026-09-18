@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "football-cli"
+version = "1.0.0"
+description = "A simple football command-line app using football-data.org"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "click>=8.1,<9",
+    "rich>=13,<16",
+    "requests>=2.32,<3",
+    "python-dotenv>=1,<2",
+]
+
+[project.scripts]
+fb = "main:cli"
+
+[tool.setuptools]
+py-modules = ["main", "api", "config", "ui"]

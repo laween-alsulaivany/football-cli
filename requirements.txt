@@ -1,0 +1,4 @@
+click>=8.1,<9 # Command-line interface library
+rich>=13,<16 # Rich library for pretty-printing tables and text
+requests>=2.32,<3 # HTTP library for making API requests
+python-dotenv>=1,<2 # Library for loading environment variables from a .env file
