@@ -133,3 +133,9 @@ standings -> standing
 team      -> myteam
 set-team  -> favorite
 ```
+
+### Reference project
+
+I used [soccer-cli](https://github.com/architv/soccer-cli) as an inspiration for the general idea.
+
+football-cli is my own implementation and does not copy code from the reference project.
