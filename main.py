@@ -15,7 +15,7 @@ def cli():
 @click.argument("league", nargs=-1, required=True)
 # shows the full standings for a league
 def standings(league):
-
+    """Show the current table for a league."""
     # concatenate the league argument into a single string again
     league_text = " ".join(league)
     league = get_league(league_text)
@@ -45,6 +45,7 @@ def standings(league):
 @cli.command("live")
 # shows matches currently marked as in play
 def live():
+    """Show matches currently in play."""
     try:
         data = get_live_matches()
     except RuntimeError as error:
@@ -63,6 +64,7 @@ def live():
 @click.argument("league", nargs=-1, required=True)
 # shows the next matchday for a league
 def fixtures(league):
+    """Show the next fixtures for a league or competition."""
     # concatenate the league argument into a single string again
     league_text = " ".join(league)
     league = get_league(league_text)
@@ -104,8 +106,9 @@ def fixtures(league):
 
 @cli.command("team")
 @click.argument("team_name", nargs=-1)
+# shows the next upcoming matches for a team
 def team(team_name):
-    # shows the next upcoming matches for a team
+    """Show upcoming matches for a team."""
     config = load_config()
     limit = config.get("team_fixture_limit", 5)
 
@@ -148,6 +151,7 @@ def team(team_name):
 @click.argument("team_name", nargs=-1, required=True)
 # saves a favorite team
 def set_team(team_name):
+    """Set your favorite team."""
     name = " ".join(team_name)
     team = get_team(name)
     if not team:
