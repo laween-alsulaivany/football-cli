@@ -324,7 +324,10 @@ def normalize_name(value):
 def get_league(value):
     key = normalize_name(value)
     key = LEAGUE_ALIASES.get(key, key)
-    return LEAGUES.get(key)
+    league = LEAGUES.get(key)
+    if not league:
+        raise RuntimeError(f"Unknown league: '{value}'")
+    return league
 
 
 # Finds a team by name using local aliases and substring matching
