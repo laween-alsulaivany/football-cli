@@ -70,3 +70,11 @@ def get_team_fixtures(team_id, limit=5):
         f"teams/{team_id}/matches",
         {"status": "SCHEDULED", "limit": limit},
     )
+
+
+# get top scorers
+def get_top_scorers(league_code, limit):
+    return get_data(
+        f"competitions/{league_code}/scorers",
+        {"limit": limit},
+    )
