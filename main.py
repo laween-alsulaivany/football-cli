@@ -3,7 +3,7 @@ from rich.console import Console
 
 from api import get_league_fixtures, get_live_matches, get_standings, get_team_fixtures
 from config import get_league, get_team, load_config, save_config
-from ui import build_live_matches_table, build_fixtures_table, build_standings_table
+from ui import build_fixtures_table, build_live_matches_table, build_standings_table
 
 
 class AliasedGroup(click.Group):
@@ -100,7 +100,11 @@ def fixtures(league):
     upcoming_matchdays = [m["matchday"] for m in matches if m.get("matchday")]
 
     if upcoming_matchdays:
-        target_matchday = current_matchday if current_matchday in upcoming_matchdays else min(upcoming_matchdays)
+        target_matchday = (
+            current_matchday
+            if current_matchday in upcoming_matchdays
+            else min(upcoming_matchdays)
+        )
         filtered = [m for m in matches if m.get("matchday") == target_matchday]
         title = f"{league['name']} — Matchday {target_matchday}"
 
@@ -164,11 +168,16 @@ def team(team_name):
 # saves a favorite team
 def set_team(team_name):
     """Set your favorite team."""
+
+    # join the team name parts into a single string
     name = " ".join(team_name)
     team = get_team(name)
+
+    # make sure it exists
     if not team:
         raise click.ClickException(f"Team not found: {name}")
 
+    # save the favorite team to the config
     config = load_config()
     config["favorite_team"] = team["shortName"]
     config["favorite_team_id"] = team["id"]
