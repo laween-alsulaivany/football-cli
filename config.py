@@ -1,9 +1,8 @@
-from zoneinfo import ZoneInfo
-from datetime import datetime
-
 import json
 import re
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 CONFIG_FILE = Path(__file__).with_name("config.json")
 
@@ -65,7 +64,6 @@ TEAMS = {
     "brentford": {"id": 402, "name": "Brentford"},
     "bournemouth": {"id": 1044, "name": "Bournemouth"},
     "coventrycity": {"id": 1076, "name": "Coventry City"},
-
     # La Liga
     "athletic": {"id": 77, "name": "Athletic"},
     "atleti": {"id": 78, "name": "Atleti"},
@@ -87,7 +85,6 @@ TEAMS = {
     "sevillafc": {"id": 559, "name": "Sevilla FC"},
     "deportivo": {"id": 560, "name": "Deportivo"},
     "santander": {"id": 5335, "name": "Santander"},
-
     # Bundesliga
     "1fckoln": {"id": 1, "name": "1. FC Köln"},
     "hoffenheim": {"id": 2, "name": "Hoffenheim"},
@@ -107,7 +104,6 @@ TEAMS = {
     "scpaderborn": {"id": 29, "name": "SC Paderborn"},
     "elversberg": {"id": 719, "name": "Elversberg"},
     "rbleipzig": {"id": 721, "name": "RB Leipzig"},
-
     # Serie A
     "milan": {"id": 98, "name": "Milan"},
     "fiorentina": {"id": 99, "name": "Fiorentina"},
@@ -129,7 +125,6 @@ TEAMS = {
     "lecce": {"id": 5890, "name": "Lecce"},
     "monza": {"id": 5911, "name": "Monza"},
     "como1907": {"id": 7397, "name": "Como 1907"},
-
     # Ligue 1
     "toulouse": {"id": 511, "name": "Toulouse"},
     "brest": {"id": 512, "name": "Brest"},
@@ -149,7 +144,6 @@ TEAMS = {
     "monaco": {"id": 548, "name": "Monaco"},
     "strasbourg": {"id": 576, "name": "Strasbourg"},
     "parisfc": {"id": 1045, "name": "Paris FC"},
-
     # Other Champions League Clubs
     "sportingcp": {"id": 498, "name": "Sporting CP"},
     "porto": {"id": 503, "name": "Porto"},
@@ -208,7 +202,6 @@ TEAM_ALIASES = {
     "cherries": "bournemouth",
     "afcbournemouth": "bournemouth",
     "coventry": "coventrycity",
-
     # La Liga
     "athleticbilbao": "athletic",
     "bilbao": "athletic",
@@ -236,7 +229,6 @@ TEAM_ALIASES = {
     "depor": "deportivo",
     "racing": "santander",
     "racingsantander": "santander",
-
     # Bundesliga
     "koln": "1fckoln",
     "cologne": "1fckoln",
@@ -267,7 +259,6 @@ TEAM_ALIASES = {
     "paderborn": "scpaderborn",
     "leipzig": "rbleipzig",
     "rasenballsportleipzig": "rbleipzig",
-
     # Serie A
     "acmilan": "milan",
     "acm": "milan",
@@ -282,7 +273,6 @@ TEAM_ALIASES = {
     "venezia": "veneziafc",
     "toro": "torino",
     "como": "como1907",
-
     # Ligue 1
     "om": "marseille",
     "olympiquedemarseille": "marseille",
@@ -297,7 +287,6 @@ TEAM_ALIASES = {
     "lens": "rclens",
     "asmonaco": "monaco",
     "racingstrasbourg": "strasbourg",
-
     # Champions League
     "sporting": "sportingcp",
     "sportinglisbon": "sportingcp",
@@ -326,7 +315,10 @@ def normalize_name(value):
 # finds a league from a normal name or alias
 def get_league(value):
     key = normalize_name(value)
+
+    # get the proper league name
     key = LEAGUE_ALIASES.get(key, key)
+
     league = LEAGUES.get(key)
     if not league:
         raise RuntimeError(f"Unknown league: '{value}'")
@@ -336,10 +328,12 @@ def get_league(value):
 # Finds a team by name using local aliases and substring matching
 def get_team(team_name):
     clean_team_name = normalize_name(team_name)
+
+    # because this is a public function, we need to make sure we don't return garbage
     if not clean_team_name:
         return None
 
-    # Resolve the direct alias if any aliases found
+    # Resolve the alias if any aliases found
     key = TEAM_ALIASES.get(clean_team_name, clean_team_name)
     if key in TEAMS:
         return {"id": TEAMS[key]["id"], "shortName": TEAMS[key]["name"]}
@@ -354,10 +348,7 @@ def get_team(team_name):
 
         # Check if the search term appears inside the key or the team name
         if clean_team_name in key or clean_team_name in normalized_team_name:
-            matched_teams.append({
-                "id": team_id,
-                "shortName": team_name
-            })
+            matched_teams.append({"id": team_id, "shortName": team_name})
 
     # Return the team only if exactly one unambiguous match was found
     if len(matched_teams) == 1:
@@ -365,6 +356,7 @@ def get_team(team_name):
     else:
         # If multiple matches were found or no matches were found
         return None
+
 
 # converts api time to the configured timezone
 
