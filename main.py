@@ -1,8 +1,20 @@
 import click
 from rich.console import Console
 
-from api import get_league_fixtures, get_live_matches, get_standings, get_team_fixtures
+from api import (
+    get_available_competitions,
+    get_league_fixtures,
+    get_live_matches,
+    get_standings,
+    get_team_fixtures,
+)
 from config import get_league, get_team, load_config, save_config
+from ui import (
+    build_fixtures_table,
+    build_live_matches_table,
+    build_standings_table,
+    draw_competitions,
+)
 from ui import build_fixtures_table, build_live_matches_table, build_standings_table
 
 
@@ -204,6 +216,14 @@ def set_team(team_name):
     Console().print(f"Favorite team set to [bold]{team['shortName']}[/bold].")
 
 
+@cli.command("competitions")
+def competitions():
+    """See all available competitions"""
+    available_competitions = get_available_competitions()
+
+    competition_table = draw_competitions(available_competitions)
+
+    Console().print(competition_table)
 @cli.command("set-league")
 @click.argument("league_name", nargs=-1, required=True)
 def set_default_league(league_name):
