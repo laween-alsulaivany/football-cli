@@ -7,15 +7,16 @@ from api import (
     get_live_matches,
     get_standings,
     get_team_fixtures,
+    get_top_scorers,
 )
 from config import get_league, get_team, load_config, save_config
 from ui import (
     build_fixtures_table,
     build_live_matches_table,
+    build_scorers_table,
     build_standings_table,
     draw_competitions,
 )
-from ui import build_fixtures_table, build_live_matches_table, build_standings_table
 
 
 class AliasedGroup(click.Group):
@@ -50,8 +51,13 @@ def standings(league):
     if league:
         # concatenate the league argument into a single string again
         league_text = " ".join(league)
-        league_name = get_league(league_text)
-        league_code = league["code"]
+        try:
+            league_details = get_league(league_text)
+        except RuntimeError as error:
+            raise click.ClickException(str(error))
+
+        league_name = league_details["name"]
+        league_code = league_details["code"]
 
     # if no league name provided, use default in config
     else:
@@ -224,6 +230,8 @@ def competitions():
     competition_table = draw_competitions(available_competitions)
 
     Console().print(competition_table)
+
+
 @cli.command("set-league")
 @click.argument("league_name", nargs=-1, required=True)
 def set_default_league(league_name):
@@ -243,6 +251,24 @@ def set_default_league(league_name):
     save_config(config)
 
     Console().print(f"Default league set to [bold]{league['name']} [/bold]")
+
+
+@cli.command("scorers")
+@click.argument("league_text", nargs=-1, required=True)
+def scorers(league_text, limit=5):
+    """Get top scorers of a competition"""
+
+    # concatenate to one single string
+    name = " ".join(league_text)
+    league = get_league(name)
+
+    league_name = league["name"]
+    league_code = league["code"]
+
+    scorers_data = get_top_scorers(league_code, limit)
+    scorers_table = build_scorers_table(scorers_data, league_name, limit)
+
+    Console().print(scorers_table)
 
 
 if __name__ == "__main__":

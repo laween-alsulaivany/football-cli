@@ -113,3 +113,19 @@ def draw_competitions(competition):
             str(row.get("type", "-")),
         )
     return table
+
+
+def build_scorers_table(data, league_name, limit):
+    title = f"Top {limit} Scorers in {league_name}"
+    table = Table(title=title)
+    table.add_column("Pos")
+    table.add_column("Player Name")
+    table.add_column("Goals", style="yellow")
+    for i, row in enumerate(data["scorers"], start=1):
+        player = row.get("player", {})
+        table.add_row(
+            str(i),
+            player.get("name", "-"),
+            str(row.get("goals", "-")),
+        )
+    return table
