@@ -24,18 +24,35 @@ def cli():
 
 
 @cli.command("standings")
-@click.argument("league", nargs=-1, required=True)
+@click.argument("league", nargs=-1)
 # shows the full standings for a league
 def standings(league):
     """Show the current table for a league."""
-    # concatenate the league argument into a single string again
-    league_text = " ".join(league)
-    league = get_league(league_text)
-    if not league:
-        raise click.ClickException(f"Unknown league: '{league_text}'")
+    config = load_config()
 
+    # prepare the empty variables
+    league_name = ""
+    league_code = ""
+
+    # if specific league name provided
+    if league:
+        # concatenate the league argument into a single string again
+        league_text = " ".join(league)
+        league_name = get_league(league_text)
+        league_code = league["code"]
+
+    # if no league name provided, use default in config
+    else:
+        league_name = config.get("default_league")
+        league_code = config.get("default_league_code")
+
+    # if niether is provided.
+    if (not league) and (league_name is None):
+        raise click.ClickException("No default league set. Use: fb set-league <league>")
+
+    # get the data
     try:
-        data = get_standings(league["code"])
+        data = get_standings(league_code)
     except RuntimeError as error:
         raise click.ClickException(str(error))
 
@@ -49,7 +66,7 @@ def standings(league):
     if not total:
         raise click.ClickException("Standings are not available right now.")
 
-    table = build_standings_table(league["name"], total.get("table", []))
+    table = build_standings_table(league_name, total.get("table", []))
 
     Console().print(table)
 
@@ -185,6 +202,27 @@ def set_team(team_name):
     save_config(config)
 
     Console().print(f"Favorite team set to [bold]{team['shortName']}[/bold].")
+
+
+@cli.command("set-league")
+@click.argument("league_name", nargs=-1, required=True)
+def set_default_league(league_name):
+    """Set your default league"""
+
+    # concatenate the league name into a single string
+    name = " ".join(league_name)
+    league = get_league(name)
+
+    # make sure league exists
+    if not league:
+        raise click.ClickException(f"League not found: {league_name}")
+
+    config = load_config()
+    config["default_league"] = league["name"]
+    config["default_league_code"] = league["code"]
+    save_config(config)
+
+    Console().print(f"Default league set to [bold]{league['name']} [/bold]")
 
 
 if __name__ == "__main__":

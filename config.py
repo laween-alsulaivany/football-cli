@@ -11,6 +11,8 @@ DEFAULT_CONFIG = {
     "favorite_team": None,
     "favorite_team_id": None,
     "team_fixture_limit": 5,
+    "default_league": None,
+    "default_league_code": None,
 }
 
 LEAGUES = {
