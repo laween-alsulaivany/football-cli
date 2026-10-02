@@ -169,11 +169,16 @@ def team(team_name):
 # saves a favorite team
 def set_team(team_name):
     """Set your favorite team."""
+
+    # join the team name parts into a single string
     name = " ".join(team_name)
     team = get_team(name)
+
+    # make sure it exists
     if not team:
         raise click.ClickException(f"Team not found: {name}")
 
+    # save the favorite team to the config
     config = load_config()
     config["favorite_team"] = team["shortName"]
     config["favorite_team_id"] = team["id"]
