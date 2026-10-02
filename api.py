@@ -20,7 +20,9 @@ def get_data(endpoint, params=None):
         raise RuntimeError("Error: FOOTBALL_API_KEY is missing from .env")
 
     url = f"{BASE_URL}/{endpoint}"
-    headers = {"X-Auth-Token": api_key}  # football-data.org API requires the X-Auth-Token header
+    headers = {
+        "X-Auth-Token": api_key
+    }  # football-data.org API requires the X-Auth-Token header
 
     try:
         response = requests.get(url, headers=headers, params=params, timeout=TIMEOUT)
@@ -52,6 +54,11 @@ def get_live_matches():
     return get_data("matches", {"status": "LIVE"})
 
 
+# gets available competitions
+def get_available_competitions():
+    return get_data("competitions")
+
+
 # gets scheduled matches for a league
 def get_league_fixtures(code):
     return get_data(f"competitions/{code}/matches", {"status": "SCHEDULED"})
@@ -59,4 +66,7 @@ def get_league_fixtures(code):
 
 # gets upcoming matches for one team
 def get_team_fixtures(team_id, limit=5):
-    return get_data(f"teams/{team_id}/matches", {"status": "SCHEDULED", "limit": limit},)
+    return get_data(
+        f"teams/{team_id}/matches",
+        {"status": "SCHEDULED", "limit": limit},
+    )

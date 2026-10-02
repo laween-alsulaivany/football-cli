@@ -1,4 +1,5 @@
 from rich.table import Table
+
 from config import format_datetime
 
 
@@ -13,8 +14,12 @@ def build_fixtures_table(title, matches, show_competition=False):
 
     for match in matches:
         date, time = format_datetime(match["utcDate"])
-        home = match.get("homeTeam", {}).get("shortName") or match.get("homeTeam", {}).get("name", "-")
-        away = match.get("awayTeam", {}).get("shortName") or match.get("awayTeam", {}).get("name", "-")
+        home = match.get("homeTeam", {}).get("shortName") or match.get(
+            "homeTeam", {}
+        ).get("name", "-")
+        away = match.get("awayTeam", {}).get("shortName") or match.get(
+            "awayTeam", {}
+        ).get("name", "-")
 
         if show_competition:
             comp = match.get("competition", {}).get("name", "-")
@@ -37,11 +42,19 @@ def build_live_matches_table(matches):
         score = match.get("score", {}).get("fullTime", {})
         home_score = score.get("home")
         away_score = score.get("away")
-        score_text = "-" if home_score is None or away_score is None else f"{home_score}-{away_score}"
+        score_text = (
+            "-"
+            if home_score is None or away_score is None
+            else f"{home_score}-{away_score}"
+        )
 
         competition = match.get("competition", {}).get("name", "-")
-        home = match.get("homeTeam", {}).get("shortName") or match.get("homeTeam", {}).get("name", "-")
-        away = match.get("awayTeam", {}).get("shortName") or match.get("awayTeam", {}).get("name", "-")
+        home = match.get("homeTeam", {}).get("shortName") or match.get(
+            "homeTeam", {}
+        ).get("name", "-")
+        away = match.get("awayTeam", {}).get("shortName") or match.get(
+            "awayTeam", {}
+        ).get("name", "-")
         status = match.get("status", "-").replace("_", " ").title()
 
         table.add_row(competition, home, score_text, away, status)
@@ -70,7 +83,9 @@ def build_standings_table(league_name, standings_rows):
         elif gd < 0:
             gd_text = f"[red]{gd_text}[/red]"
 
-        team_name = row.get("team", {}).get("shortName") or row.get("team", {}).get("name", "-")
+        team_name = row.get("team", {}).get("shortName") or row.get("team", {}).get(
+            "name", "-"
+        )
 
         table.add_row(
             str(row.get("position", "-")),
@@ -83,5 +98,18 @@ def build_standings_table(league_name, standings_rows):
             str(row.get("goalsAgainst", "-")),
             gd_text,
             str(row.get("points", "-")),
+        )
+    return table
+
+
+def draw_competitions(competition):
+    title = " All Available Compeitions"
+    table = Table(title=title)
+    table.add_column("Competition Name")
+    table.add_column("Type", style="yellow")
+    for row in competition["competitions"]:
+        table.add_row(
+            str(row.get("name", "-")),
+            str(row.get("type", "-")),
         )
     return table
