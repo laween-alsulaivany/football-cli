@@ -9,3 +9,7 @@ config.json
 *.json
 /football_cli.egg-info
 /build
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
