@@ -353,7 +353,7 @@ def get_team(team_name):
             matched_teams.append({"id": team_id, "shortName": team_name})
 
     # Return the team only if exactly one unambiguous match was found
-    if len(matched_teams) == 1:
+    if len(matched_teams) >= 1:
         return matched_teams[0]
     else:
         # If multiple matches were found or no matches were found
